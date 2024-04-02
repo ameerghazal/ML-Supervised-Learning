@@ -10,10 +10,15 @@
 - Proposed Contributions: Ameer (5033) will implement Linear Regression and K-N-N., Namil (4033) will implement Decision Trees and Random Forest.
 
 ## Checkpoint
+
 - Aim to get two methods done by checkpoint (LR, KNN).
+- Check the book examples for LR, KNN.
 - Watch videos on how to apply these.
 - Test results with sci-kit and chat.
-- 
+- Draft up checkpoint in overleaf. Keep it simple, 1 page, similar to RL.
+- Overfiting / underfitting.
+- Testing data with validity sets; check the sample report.
+- Process: Finish HW5, Do the algoritms, plot the algorithms side-by-side, write up checkpoint.
 
 ## Novelty
 - Data pre-processing, one-hot enconding data that is categorical (HW5).
