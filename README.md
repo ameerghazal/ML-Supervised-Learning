@@ -9,6 +9,18 @@
 - Dimension of Instances (n): name, year, selling price, km driven, fuel, seller type, transmission, Owner
 - Proposed Contributions: Ameer (5033) will implement Linear Regression and K-N-N., Namil (4033) will implement Decision Trees and Random Forest.
 
+## Checkpoint
+- Aim to get two methods done by checkpoint (LR, KNN).
+- Watch videos on how to apply these.
+- Test results with sci-kit and chat.
+- 
+
+## Novelty
+- Data pre-processing, one-hot enconding data that is categorical (HW5).
+- Validation and tester sets for the report (HW5).
+- Ski-learning comparison for model checking. 
+- Also, if we have non-complete data it is a novelty.
+- The types of methods we use that are not covered could be noveltys.
 
 ## K-Nearest-Neighbors
 
@@ -16,8 +28,13 @@
 - We can add weights and learning rates to test other options.
 - May need to split into validation sets (?).
 - Use HW-4 for pseduo-code implementation.
+- Euclidean-distance (or other distance formulas). 
 
 ## Linear Regression
+
+- Logic: Predict a response variable based on a predictor variable(s). Furthermore, it is used to predict the value of a dependent variables based on the values of one or more independent variables, in which we have options of simple linear regression (SLR) and multiple linear regression (MLR).
+- LR with Gradient Descent (RSS equation), with program in HW-4.
+- Explore full vs. stochastic gradient descent, in which the pseduo code is in the book.
 
 ## Decision Trees
 
