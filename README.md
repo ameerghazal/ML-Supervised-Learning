@@ -38,6 +38,7 @@
 ## Linear Regression
 
 - Logic: Predict a response variable based on a predictor variable(s). Furthermore, it is used to predict the value of a dependent variables based on the values of one or more independent variables, in which we have options of simple linear regression (SLR) and multiple linear regression (MLR).
+- Task: Predict the label y on an unknown instance x by using a linear combination of the features/attributes of x (aim to minimize the true risk).
 - LR with Gradient Descent (RSS equation), with program in HW-4.
 - Explore full vs. stochastic gradient descent, in which the pseduo code is in the book.
 
