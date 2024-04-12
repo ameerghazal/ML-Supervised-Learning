@@ -1,41 +1,32 @@
 # Import the dataset and ski libraries to check our model.
 import pandas as pd
 import numpy as np
-from matplotlib.pyplot import subplots
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split # Used for testing.
+from sklearn.linear_model import LinearRegression # Used for testing.
+
+# Define the OLS Regression Algorithm from Scratch.
+class LinearRegressionOLS:
+    # Constructor for the weights, if not pre-assigned.
+    def __init__(self):
+        self.weights = None
+
+    # Function used to fit the model, given the input data and the label to be predicted.
+    def fitModel(self, X, y):
+        # Add bias term
+        X = np.insert(X.to_numpy(), 0, 1, axis=1)
+        # Calculate weights using pseudoinverse, taken module 7 slides.
+        self.weights = np.linalg.pinv(X.T.dot(X)).dot(X.T).dot(y.to_numpy())
+
+    # Function used to predict the output, given the X (input data).
+    def predictModel(self, X):
+        # Add bias term
+        X = np.insert(X.to_numpy(), 0, 1, axis=1)
+        return X.dot(self.weights) # Compute h(x)
 
 # Calculate the Mean Squared Error (MSE).
 def MSE(df, yActual, yPredict):
   return (1 / len(df)) * sum((yActual - yPredict) ** 2)
-
-def gradientDescent(training_examples, learning_rate, iterations):
-  # Each training example is a pair of the form (x, t), where x is the vector of input values, and t is the target output value, learning rate (n).
-  
-  # Initialize each weight to 1 (given).
-  weights = [1, 1]
-  
-  # Until termination is met, do the following:
-  for _ in range(iterations):
-    # Initialize each \delta w_{i} to zero.
-    deltaWeights = [0,0]
-    
-    # For each (x, t) in training_examples
-    for (inputVal, label) in training_examples:
-      # Input the instance x to the unit and compute the output o.
-      o = weights[0] + inputVal * (weights[1])
-      
-      # For each linear unit weight w_i, do
-      for i in range(len(weights)):
-        # \delta w_i = \delta w_i + learning_rate * (t - o)x_i
-        if (i != 0): deltaWeights[i] += (learning_rate * (label - o) * inputVal)
-        else: deltaWeights[i] += (learning_rate * (label - o) * 1) # x_0 = 1 in the equation.
-
-    # For each linear unit weight wi, do
-    for i in range(len(weights)):
-      # w_i = w_i + \delta w_i
-      weights[i] += deltaWeights[i]
-      
-    # Print weights after each iteration
-    print(f"Iteration {_ + 1}: w0={weights[0]}, w1={weights[1]}")
 
 # Define the column names for the table and read in the dataset.
 column_names = ['name', 'year', 'selling_price', 'km_driven', 'fuel', 'seller_type', 'transmission', 'owner']
@@ -62,19 +53,72 @@ df['second_owner'] = (df['owner'] == 'Second Owner').astype(int)
 df['third_owner'] = (df['owner'] == 'Thrid Owner').astype(int) 
 df['fourth_owner'] = (df['owner'] == 'Fourth & Above Owner').astype(int) 
 
-# Remove the fuel, owner, etc..
+# Remove the fuel, owner, etc.
 df = df.drop(['fuel', 'owner', 'seller_type'], axis=1)
+
+# Convert the selling price to american USD from rupee.
+df['selling_price'] /= 83
 
 # Store the predictor and target variables.
 X = df.drop(['name', 'selling_price'], axis=1)
 y = df['selling_price']
 
-# Print the first six.
-print(df.head())
-# print(df['seller_individual'])
-# print(X, y)
+# Remove 20% for testing using scki-learning, in which 80% returned will be training data.
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=50)
 
+# Now, split the training dataframe into 75% training and 25% validation.
+X_train, X_validation, y_train, y_validation = train_test_split(X_test, y_test, test_size=0.25, random_state=50)
 
+# Train the OLS regression model.
+LrModel = LinearRegressionOLS()
+LrModel.fitModel(X_train, y_train)
 
+# Make predictions on the validation data.
+y_validation_predictions = LrModel.predictModel(X_validation)
 
+# Calculate the MSE on the validation data.
+MSE_validation = MSE(df=df, yActual=y_validation, yPredict=y_validation_predictions)
 
+# Make predictions on the test daa.
+y_test_predictions = LrModel.predictModel(X_test)
+
+# Calculate the MSE on the test data.
+MSE_test = MSE(df=df, yActual=y_test, yPredict=y_test_predictions)
+
+# Print out both the results.
+print(f"Mean Squared Error (Validation Set): {MSE_validation}")
+print(f"Mean Squared Error (Test Set): {MSE_test}")
+
+# Compare output to the sklearning function.
+LrSkl = LinearRegression()
+LrSkl.fit(X, y) # fit the model.
+y_ski_valid_pred = LrSkl.predict(X_validation) # Preds. based on valid.
+y_ski_test_pred = LrSkl.predict(X_test) # Preds. based on test.
+print(f"Sklearn Mean Squared Error (Validation): {MSE(df=df, yActual=y_validation, yPredict=y_ski_valid_pred)}")
+print(f"Sklearn Mean Squared Error (Test): { MSE(df=df, yActual=y_test, yPredict=y_ski_test_pred)}")
+
+# TODO: ASSESS GOOD FIT OF LINEAR MODEL WITH RSS, R^2, PLOTTING, ETC.
+
+# Plotting the regression models
+fig, ax = plt.subplots(1, 2, figsize=(15, 5))
+
+# Plotting for OLS Regression Model for test set.
+ax[0].scatter(y_test, y_test_predictions, color='blue')
+ax[0].plot([min(y_test), max(y_test)], [min(y_test), max(y_test)], color='red', linestyle='--')
+ax[0].set_xlabel('Actual Selling Price')
+ax[0].set_ylabel('Predicted Selling Price')
+ax[0].set_title('OLS Regression Model')
+ax[0].legend(['Predicted', 'Actual'])
+
+# Plotting for Residual plot test set.
+residuals_test = y_test - y_test_predictions
+ax[1].scatter(y_test_predictions, residuals_test, color='blue', label="Residuals")
+ax[1].axhline(y=0, color='red', linestyle='--', label='Zero Residual Line')
+ax[1].set_xlabel('Predicted Selling Price')
+ax[1].set_ylabel('Residuals')
+ax[1].set_title('Residual Plot (Test Set)')
+ax[1].legend()
+
+plt.tight_layout()
+plt.savefig("Linear_Regression/LRPlots.png")
+plt.show()
