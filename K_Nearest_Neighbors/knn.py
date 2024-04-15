@@ -2,6 +2,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib as mpl # Used for font.
 from sklearn.model_selection import train_test_split # Used for testing.
 from sklearn.neighbors import KNeighborsRegressor # Used for testing.
 from sklearn.metrics import mean_squared_error, r2_score
@@ -101,6 +102,8 @@ print(mse_sklearn)
 
 # Plotting actual vs predicted selling prices for custom KNN
 plt.figure(figsize=(12, 6))
+# Plotting for Residual plot test set.
+mpl.rcParams.update({'font.size': 16})  # Set the font-size for plot.
 
 # Plotting actual selling prices
 plt.subplot(1, 2, 1)
