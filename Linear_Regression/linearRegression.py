@@ -11,25 +11,15 @@ from sklearn.metrics import mean_squared_error
 # Define the OLS Regression Algorithm from Scratch.
 class LinearRegressionOLS:
     # Constructor for the weights, if not pre-assigned.
-    def __init__(self, alpha = 0, li_ratio = 0):
+    def __init__(self):
         self.weights = None
-        self.alpha = alpha
-        self.li_ratio = li_ratio
 
     # Function used to fit the model, given the input data and the label to be predicted.
     def fitModel(self, X, y):
         # Add bias term
         X = np.insert(X.to_numpy(), 0, 1, axis=1)
-        # Compute the number of features.
-        I = np.identity(X.shape[1])
-        # Lasso Penalty Function, where we multiply the reg paramaters and the number of features (1).
-        lasso = self.alpha * self.li_ratio * np.ones(X.shape[1])
-        # Ridge penalty function.
-        ridge = self.alpha * I
-        # Elastic penalty function, where we combine the above two equations, if non zero.
-        elastic = ridge + (1 - self.li_ratio) * lasso
         # Calculate weights using pseudoinverse, taken module 7 slides, where elastic will converge to 0 if alpha and li_ratio are 0.
-        self.weights = np.linalg.pinv(X.T.dot(X) + elastic).dot(X.T).dot(y.to_numpy())
+        self.weights = np.linalg.pinv(X.T.dot(X)).dot(X.T).dot(y.to_numpy())
 
     # Function used to predict the output, given the X (input data).
     def predictModel(self, X):
@@ -103,25 +93,6 @@ plt.tight_layout()
 plt.savefig("Linear_Regression/ResidualPlot.png")
 plt.show()
 
-
-# Novelty: add LASSO and Ridge regression regularization parameters.
-LrModel = LinearRegressionOLS(alpha=0.01, li_ratio=1)  # Setting l1_ratio=1 for Lasso
-LrModel.fitModel(X_train, y_train)
-
-# Fit the model with the concat data and predict on the test set.
-y_test_predictions = LrModel.predictModel(X_test)
-
-# Calculate the MSE, R^2 on the test data.
-MSE_test = MSE(df=X_test, yActual=y_test, yPredict=y_test_predictions)
-multipleRSquared_test = RSquared(yActual=y_test, yPredict=y_test_predictions, variables=X.shape[1])
-adjRSquared_test = RSquared(yActual=y_test, yPredict=y_test_predictions, variables=X.shape[1], type="adjusted")
-
-# Print out both the results.
-print(f"Lasso Mean Squared Error (Test Set): {MSE_test}")
-print(f"R^2 (Test Set): {multipleRSquared_test}")
-print(f"Adjusted R^2 (Test Set): {adjRSquared_test}")
-
-
 # Novelty: search the dataset for outliers (z-score calculation, greater than three) (boxplot (?)), remove outliers, and refit the data and test to see if there are improvements.
 from scipy import stats
 
@@ -134,7 +105,7 @@ threshold = 3
 # Find the outliers within the dataset (+- 3 are considered outliers as they are significantly far from the mean and may skew the results).
 outliers = (np.abs(z_scores) > threshold).any(axis=1)
 
-# Remove outliers
+# Remove outliers from the data frame.
 df_no_outliers = df[~outliers]
 
 # Print the number of outliers removed
@@ -155,9 +126,12 @@ lr_no_outliers.fitModel(X_train_no_outliers, y_train_no_outliers)
 # Make predictions on the test set without outliers
 y_pred_no_outliers = lr_no_outliers.predictModel(X_test_no_outliers)
 
-# Evaluate the model without outliers
-mse_no_outliers = mean_squared_error(y_test_no_outliers, y_pred_no_outliers)
-r2_no_outliers = r2_score(y_test_no_outliers, y_pred_no_outliers)
+# Calculate the MSE, R^2 on the test data no outliers.
+MSE_test_no_outliers = MSE(df=X_test_no_outliers, yActual=y_test_no_outliers, yPredict=y_pred_no_outliers)
+multipleRSquared_test_no_outliers = RSquared(yActual=y_test_no_outliers, yPredict=y_pred_no_outliers, variables=X.shape[1])
+adjRSquared_test_no_outliers = RSquared(yActual=y_test_no_outliers, yPredict=y_pred_no_outliers, variables=X.shape[1], type="adjusted")
 
-print(f"Mean Squared Error without outliers: {mse_no_outliers}")
-print(f"R^2 Score without outliers: {r2_no_outliers}")
+# Print out both the results.
+print(f"Mean Squared Error (Outlier Test Set): {MSE_test_no_outliers}")
+print(f"R^2 (Outlier Test Set): {multipleRSquared_test_no_outliers}")
+print(f"Adjusted R^2 (Outlier Test Set): {adjRSquared_test_no_outliers}")

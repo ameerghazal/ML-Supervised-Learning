@@ -87,6 +87,7 @@ class KNN:
       plt.ylabel('Selling Price')
       plt.title('Custom KNN vs Sklearn KNN: Predicted vs Actual (Test Set)')
       plt.legend()
+      plt.grid(True)
       plt.savefig("K_Nearest_Neighbors/knnComparsion.png")
       plt.show()
 
@@ -160,4 +161,3 @@ print(f"Sklearn MSE {mse_custom}")
 knnModel.graphKNN(y_test, y_pred, y_pred_sklearn)
 knnModel.graphKNN(y_test, y_pred, double=True)
 
-# At this point, we could reconcat the x-test, x-train, and x-valid datasets and publish the final fit.

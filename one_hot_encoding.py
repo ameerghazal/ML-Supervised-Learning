@@ -32,5 +32,5 @@ df = df.drop(['fuel', 'owner', 'seller_type'], axis=1)
 # Convert the selling price to american USD from rupee.
 df['selling_price'] /= 83
 
-# Save the modified DataFrame to a new CSV file
+# Save the modified DataFrame to a new CSV file, which is used for all our implementations.
 df.to_csv("modified_chosen.csv", index=False)

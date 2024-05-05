@@ -158,7 +158,7 @@ y = df['selling_price']
 
 # Remove 20% for testing using scki-learning, in which 80% returned will be training data.
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=50)
-
+ 
 # Now, split the training dataframe into 75% training and 25% validation.
 X_train, X_validation, y_train, y_validation = train_test_split(X_test, y_test, test_size=0.25, random_state=50)
 
@@ -209,3 +209,4 @@ sklearn_predictions = sklearn_decision_tree.predict(X_test)
 sklearn_mse = mean_squared_error(y_test, sklearn_predictions)
 print("Scikit-learn MSE:", sklearn_mse)
 #print("Scikit-learn predictions:", sklearn_predictions)
+
